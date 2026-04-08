@@ -6,44 +6,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Login</title>
 
-    @vite('resources/css/app.css')
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
-<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+<body class="bg-light">
 
-    <div class="w-full max-w-md p-8 bg-white shadow-xl rounded-2xl">
+    <div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
 
-        <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Admin Login</h2>
+        <div class="card shadow p-4" style="width: 100%; max-width: 400px; border-radius: 15px;">
 
-        <form action="/admin-login" method="POST" class="space-y-5">
-            @csrf
+            <h2 class="text-center mb-4 fw-bold">Admin Login</h2>
 
-            @error('user')
-                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-            @enderror
+            <form action="{{ route('adminLogin') }}" method="POST">
+                @csrf
 
-            <div>
-                <label class="block text-gray-700 font-medium mb-1">Admin Name</label>
-                <input type="text" name="name" placeholder="Enter Admin Name"
-                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
-                @error('name')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                @error('user')
+                    <p class="text-danger small">{{ $message }}</p>
                 @enderror
-            </div>
 
-            <div>
-                <label class="block text-gray-700 font-medium mb-1">Admin Password</label>
-                <input type="password" name="password" placeholder="Enter Admin Password"
-                    class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
-                @error('password')
-                    <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                @enderror
-            </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Admin Name</label>
+                    <input type="text" name="name" placeholder="Enter Admin Name" class="form-control">
 
-            <button type="submit"
-                class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition duration-300">Login</button>
-        </form>
+                    @error('name')
+                        <p class="text-danger small mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
 
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Admin Password</label>
+                    <input type="password" name="password" placeholder="Enter Admin Password" class="form-control">
+
+                    @error('password')
+                        <p class="text-danger small mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 fw-semibold">
+                    Login
+                </button>
+            </form>
+
+        </div>
     </div>
 
 </body>
