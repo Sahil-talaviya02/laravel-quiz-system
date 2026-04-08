@@ -17,4 +17,5 @@ Route::controller(AdminController::class)->group(function () {
     Route::post('/add-categories', 'addCategories')->name('addCategories');
     Route::get('/admin-categories/delete/{id}', 'deleteCategories')->name('deleteCategory');
     Route::get('/add-quiz', 'addQuiz')->name('addQuiz');
+    Route::post('/add-mcq', 'addMcqs')->name('addMcq');
 });

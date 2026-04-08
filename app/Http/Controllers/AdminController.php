@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Admin;
 use App\Models\Categorie;
+use App\Models\Mcq;
 use App\Models\Quizze;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -106,5 +107,44 @@ class AdminController extends Controller
         } else {
             return redirect()->route('adminLogin');
         }
+    }
+
+    function addMcqs(Request $request) {
+        $request->validate([
+            'addQuestion' => 'required | max:300',
+            'optionA' => 'required | max:300',
+            'optionB' => 'required | max:300',
+            'optionC' => 'required | max:300',
+            'optionD' => 'required | max:300',
+            'correct_ans' => 'required',
+        ]);
+
+        $mcq = new Mcq();
+        $admin = Session::get('admin');
+        $quiz = Session::get('quizDetails');
+
+        $mcq->question = $request->addQuestion;
+        $mcq->a = $request->optionA;
+        $mcq->b = $request->optionB;
+        $mcq->c = $request->optionC;
+        $mcq->d = $request->optionD;
+        $mcq->correct_ans = $request->correct_ans;
+        if (!$admin || !$quiz) {
+                return redirect()->route('dashboard')->with('error', 'Session expired');
+        }
+
+        $mcq->admin_id = $admin->id;
+        $mcq->quiz_id = $quiz->id;
+        $mcq->category_id = $quiz->category_id;
+
+        if ($mcq->save()) {
+            if ($request->submit == "addMore") {
+                return redirect()->to(url()->previous());
+            } else {
+                Session::forget('quizDetails');
+                return redirect()->route('dashboard');
+            }
+        }
+        return $request;
     }
 }
