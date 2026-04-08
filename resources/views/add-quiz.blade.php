@@ -48,11 +48,19 @@
             </div>
         @else
             {{-- add Mcq quiz --}}
-            <h2 class="text-center mb-4 fw-bold">Quiz : {{ Session('quizDetails.name') }}</h2>
+            <h4 class="text-center mb-4 fw-bold">Quiz : {{ Session('quizDetails.name') }}</h4>
 
             <div class="m-4 d-flex justify-content-center align-items-center">
                 <div class="card shadow p-4" style="width: 100%; max-width: 400px; border-radius: 15px;">
                     <h2 class="text-center mb-4 fw-bold">Add Mcq</h2>
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <p class="mb-0">Total MCQ: {{ $totalMcq }}</p>
+
+                        @if ($totalMcq > 0)
+                            <a href="{{ route('showQuiz', Session('quizDetails.id')) }}"
+                                class="btn btn-info btn-sm">Show MCQ</a>
+                        @endif
+                    </div>
 
                     <form action="{{ route('addMcq') }}" method="POST">
                         @csrf
@@ -122,6 +130,8 @@
                                 More</button>
                             <button type="submit" name="submit" value="done" class="btn btn-success flex-fill">Add
                                 And Submit</button>
+                            <button type="submit" name="submit" value="close"
+                                class="btn btn-success flex-fill">Back</button>
                         </div>
                     </form>
                 </div>

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Session;
 
 class AdminController extends Controller
 {
+
     public function login(Request $request) {
         $request->validate([
             'name' => 'required',
@@ -90,6 +91,9 @@ class AdminController extends Controller
     function addQuiz() {
         $categories = Categorie::get();
         $admin = Session::get('admin');
+        $totalMcq = 0;
+
+
         if ($admin) {
             $quizName = request('quiz');
             $qcategoryId = request('category_id');
@@ -102,49 +106,67 @@ class AdminController extends Controller
                 if ($quiz->save()) {
                     Session::put('quizDetails',$quiz);
                 }
+            } else {
+                $quizs = Session::get('quizDetails');
+                $totalMcq = $quizs && Mcq::where('quiz_id', $quizs->id)->count();
             }
-            return view('add-quiz', ['name' => $admin->name,'categories' => $categories]);
+            return view('add-quiz', ['name' => $admin->name,'categories' => $categories, "totalMcq" => $totalMcq]);
         } else {
             return redirect()->route('adminLogin');
         }
     }
 
     function addMcqs(Request $request) {
-        $request->validate([
-            'addQuestion' => 'required | max:300',
-            'optionA' => 'required | max:300',
-            'optionB' => 'required | max:300',
-            'optionC' => 'required | max:300',
-            'optionD' => 'required | max:300',
-            'correct_ans' => 'required',
-        ]);
+        if ($request->submit == "close") {
+            Session::forget('quizDetails');
+            return redirect()->route('addQuiz');
+        } else {
+            $request->validate([
+                'addQuestion' => 'required | min:5 | max:300',
+                'optionA' => 'required | max:300',
+                'optionB' => 'required | max:300',
+                'optionC' => 'required | max:300',
+                'optionD' => 'required | max:300',
+                'correct_ans' => 'required',
+            ]);
 
-        $mcq = new Mcq();
-        $admin = Session::get('admin');
-        $quiz = Session::get('quizDetails');
+            $mcq = new Mcq();
+            $admin = Session::get('admin');
+            $quiz = Session::get('quizDetails');
 
-        $mcq->question = $request->addQuestion;
-        $mcq->a = $request->optionA;
-        $mcq->b = $request->optionB;
-        $mcq->c = $request->optionC;
-        $mcq->d = $request->optionD;
-        $mcq->correct_ans = $request->correct_ans;
-        if (!$admin || !$quiz) {
-                return redirect()->route('dashboard')->with('error', 'Session expired');
-        }
+            $mcq->question = $request->addQuestion;
+            $mcq->a = $request->optionA;
+            $mcq->b = $request->optionB;
+            $mcq->c = $request->optionC;
+            $mcq->d = $request->optionD;
+            $mcq->correct_ans = $request->correct_ans;
+            if (!$admin || !$quiz) {
+                    return redirect()->route('dashboard')->with('error', 'Session expired');
+            }
 
-        $mcq->admin_id = $admin->id;
-        $mcq->quiz_id = $quiz->id;
-        $mcq->category_id = $quiz->category_id;
+            $mcq->admin_id = $admin->id;
+            $mcq->quiz_id = $quiz->id;
+            $mcq->category_id = $quiz->category_id;
 
-        if ($mcq->save()) {
-            if ($request->submit == "addMore") {
-                return redirect()->to(url()->previous());
-            } else {
-                Session::forget('quizDetails');
-                return redirect()->route('dashboard');
+            if ($mcq->save()) {
+                if ($request->submit == "addMore") {
+                    return redirect()->to(url()->previous());
+                } else {
+                    Session::forget('quizDetails');
+                    return redirect()->route('dashboard');
+                }
             }
         }
-        return $request;
     }
+
+    function showQuiz($id) {
+        $admin = Session::get('admin');
+        $mcqs = Mcq::where('quiz_id', $id)->get();
+        if ($admin) {
+            return view('show-quiz', ['name' => $admin->name,'mcqs' => $mcqs]);
+        } else {
+            return redirect()->route('adminLogin');
+        }
+    }
+
 }
