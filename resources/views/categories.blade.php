@@ -75,7 +75,6 @@
                                 <td>
                                     <a href="{{ route('quizList', [$category->id,$category->name]) }}"
                                         class="btn btn-info btn-sm">View</a>
-
                                     <a href="{{ route('deleteCategory', $category->id) }}"
                                         class="btn btn-danger btn-sm">Delete</a>
                                 </td>

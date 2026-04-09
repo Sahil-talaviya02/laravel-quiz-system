@@ -4,11 +4,27 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+Route::controller(UserController::class)->group(function () {
 
-Route::get('/', [UserController::class, 'welcome']);
+    Route::get('/', 'welcome')->name('home');
+
+    Route::get('/user-quiz-list/{id}/{quizName}', 'userQuizList')->name('userQuizList');
+
+    Route::get('/start-quiz/{id}/{name}', 'startQuiz')->name('startQuiz');
+
+    // Auth pages
+    Route::get('/login', 'userLoginQuiz')->name('loginPage');
+    Route::get('/signup', function () {
+        return view('user-signup');
+    })->name('signupPage');
+
+    // Auth actions
+    Route::post('/login', 'userLogin')->name('userLogin');
+    Route::post('/signup', 'userSignUp')->name('userSignUp');
+
+    Route::get('/logout', 'userLogout')->name('userLogout');
+});
+
 
 Route::view('/admin-login','admin-login')->name('adminLogin');
 

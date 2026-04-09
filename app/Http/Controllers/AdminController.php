@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
-use App\Models\Categorie;
+use App\Models\Category;
 use App\Models\Mcq;
-use App\Models\Quizze;
+use App\Models\Quiz;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
@@ -44,7 +44,7 @@ class AdminController extends Controller
     }
 
     function categories() {
-        $categories = Categorie::get();
+        $categories = Category::get();
         $admin = Session::get('admin');
         if ($admin) {
             return view('categories', ['name' => $admin->name,'categories' => $categories]);
@@ -65,7 +65,7 @@ class AdminController extends Controller
         ]);
 
         $admin = Session::get('admin');
-        $category = new Categorie();
+        $category = new Category();
         $category->name = $request->category;
         $category->creator = $admin->name;
 
@@ -77,7 +77,7 @@ class AdminController extends Controller
     }
 
     function deleteCategories($id) {
-        $isDelete = Categorie::find($id)->delete();
+        $isDelete = Category::find($id)->delete();
 
         if ($isDelete) {
             Session::flash('categories',"Success: category Deleted");
@@ -89,7 +89,7 @@ class AdminController extends Controller
     }
 
     function addQuiz() {
-        $categories = Categorie::get();
+        $categories = Category::get();
         $admin = Session::get('admin');
         $totalMcq = 0;
 
@@ -99,7 +99,7 @@ class AdminController extends Controller
             $qcategoryId = request('category_id');
 
             if ($quizName && $qcategoryId && !Session::has('quizDetails')) {
-                $quiz = new Quizze();
+                $quiz = new Quiz();
                 $quiz->name = $quizName;
                 $quiz->category_id = $qcategoryId;
 
@@ -173,7 +173,7 @@ class AdminController extends Controller
         $admin = Session::get('admin');
 
         if ($admin) {
-            $quizData = Quizze::where('category_id', $id)->get();
+            $quizData = Quiz::where('category_id', $id)->get();
             return view('quiz-list', ['name' => $admin->name,'quizData' => $quizData, 'category' => $category]);
         } else {
             return redirect()->route('adminLogin');
