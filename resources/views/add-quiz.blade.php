@@ -20,7 +20,7 @@
             {{-- add quiz --}}
             <div class="m-4 d-flex justify-content-center align-items-center">
                 <div class="card shadow p-4" style="width: 100%; max-width: 400px; border-radius: 15px;">
-                    <h2 class="text-center mb-4 fw-bold">Add Categories</h2>
+                    <h2 class="text-center mb-4 fw-bold">Add Quiz</h2>
 
                     <form action="{{ route('addQuiz') }}" method="get">
                         @csrf

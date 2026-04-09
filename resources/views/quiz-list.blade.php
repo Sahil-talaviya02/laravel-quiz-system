@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Categories</title>
+    <title>Categories</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -17,7 +17,7 @@
     <main class="flex-grow-1 overflow-auto p-3">
 
         <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0">Quiz Name : {{ $quizName }}</h4>
+            <h4 class="mb-0">Category Name: {{ $category }}</h4>
 
             <a href="{{ route('addQuiz') }}" class="btn btn-info btn-sm">Back</a>
         </div>
@@ -28,16 +28,21 @@
                 <table class="table table-hover table-striped mb-0 text-center align-middle">
                     <thead class="table-dark">
                         <tr>
-                            <th>MCQ ID</th>
-                            <th>Question</th>
+                            <th>Quiz ID</th>
+                            <th>Name</th>
+                            {{-- <th>Creator</th> --}}
+                            <th>Action</th>
                         </tr>
                     </thead>
 
                     <tbody>
-                        @foreach ($mcqs as $mcq)
+                        @foreach ($quizData as $item)
                             <tr>
                                 <td>{{ $loop->iteration }}</td>
-                                <td class="fw-semibold">{{ $mcq->question }}</td>
+                                <td class="fw-semibold">{{ $item->name }}</td>
+                                {{-- <td>{{ $mcq->creator }}</td> --}}
+                                <td><a href="{{ route('showQuiz',[$item->id,$item->name]) }}"
+                                        class="btn btn-danger btn-sm">View</a></td>
                             </tr>
                         @endforeach
                     </tbody>

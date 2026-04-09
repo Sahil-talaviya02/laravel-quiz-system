@@ -62,7 +62,7 @@
                             <th>ID</th>
                             <th>Category Name</th>
                             <th>Creator</th>
-                            <th>Action</th>
+                            <th colspan="2">Action</th>
                         </tr>
                     </thead>
 
@@ -72,8 +72,13 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td class="fw-semibold">{{ $category->name }}</td>
                                 <td>{{ $category->creator }}</td>
-                                <td><a href="{{ route('deleteCategory', $category->id) }}"
-                                        class="btn btn-danger btn-sm">Delete</a></td>
+                                <td>
+                                    <a href="{{ route('quizList', [$category->id,$category->name]) }}"
+                                        class="btn btn-info btn-sm">View</a>
+
+                                    <a href="{{ route('deleteCategory', $category->id) }}"
+                                        class="btn btn-danger btn-sm">Delete</a>
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>
