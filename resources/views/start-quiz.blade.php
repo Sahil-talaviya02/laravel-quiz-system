@@ -35,12 +35,12 @@
 
                         <!-- Button -->
                         @if (session('user'))
-                            <a href="#" class="btn btn-success w-100 fw-semibold">
-                                Start Quiz
-                            </a>
+                            <a href="{{ route('mcq', [Session('firstMcq')->id, $quizName]) }}"
+                                class="btn btn-success w-100 fw-semibold">
+                                Start Quiz </a>
                         @else
-                            <a href="{{ route('loginPage') }}" class="btn btn-primary w-100 fw-semibold">Login /
-                                Register to Start</a>
+                            <a class="btn btn-primary w-100 fw-semibold" href="{{ route('loginPage') }}">Login /Register
+                                to Start</a>
                         @endif
 
                     </div>

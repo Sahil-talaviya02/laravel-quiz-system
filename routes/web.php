@@ -23,7 +23,16 @@ Route::controller(UserController::class)->group(function () {
     Route::post('/signup', 'userSignUp')->name('userSignUp');
 
     Route::get('/logout', 'userLogout')->name('userLogout');
+
+    //mcq pages
+    Route::get('/mcq/{id}/{name}', 'mcq')->name('mcq');
+    Route::post('/submitNext/{id}', 'submitNext')->name('submitNext');
+
+    
+    Route::post('/tab-change', 'tabChange')->name('tabChange');
+    Route::get('/force-result','forceResult')->name('forceResult');
 });
+
 
 
 Route::view('/admin-login','admin-login')->name('adminLogin');
