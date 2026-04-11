@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\UserForgetPassword;
+use App\Mail\VerifyUser;
 use App\Models\Category;
 use App\Models\Mcq;
 use App\Models\MCQ_Record;
@@ -9,7 +11,9 @@ use App\Models\Quiz;
 use App\Models\Record;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 
 class UserController extends Controller
@@ -37,7 +41,7 @@ class UserController extends Controller
 
     // Show login page
     function userLoginQuiz() {
-         // Only store previous URL if it's NOT login/signup page
+        // Only store previous URL if it's NOT login/signup page
         $previous = url()->previous();
 
         if (!str_contains($previous, 'login') && !str_contains($previous, 'signup')) {
@@ -66,11 +70,11 @@ class UserController extends Controller
         if (Session::has('quiz-url')) {
             $url = Session::get('quiz-url');
             Session::forget('quiz-url');
-            return redirect($url);
+            return redirect($url)->with('success', 'Login successful!');
         }
 
         // Default → dashboard/home
-        return redirect()->route('home');
+        return redirect()->route('home')->with('success', 'Login successful!');
     }
 
     // Signup
@@ -87,9 +91,14 @@ class UserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        $link = Crypt::encryptString($request->email);
+        $link = url('/verify-user/'.$link);
+
+        Mail::to($request->email)->send(new VerifyUser($link));
+
         // Redirect to login page (NO AUTO LOGIN)
         return redirect()->route('loginPage')
-            ->with('success', 'Registration successful! Please login.')
+            ->with('success', 'Registration successful! Please login and check email to verify account')
             ->with('email', $request->email);
     }
 
@@ -173,6 +182,11 @@ class UserController extends Controller
             ->where('record_id', $currentQuiz['recordId'])
             ->get();
 
+        $record = Record::find($currentQuiz['recordId']);
+        if ($record) {
+            $record->status = 2;
+            $record->update();
+        }
         return view('quiz_result', compact('resultData'));
     }
 
@@ -221,4 +235,58 @@ class UserController extends Controller
 
         return view('quiz_result', compact('resultData'));
     }
+
+    //user attempts quiz details
+    function userDetails() {
+        $quizRecord = Record::WithQuiz()->where('user_id', Session::get('user')->id)->get();
+        return view('user-details',['quizRecord' => $quizRecord]);
+    }
+
+    //verify email
+    function verifyUser($email) {
+        $orgEmail = Crypt::decryptString($email);
+        $user = User::where('email', $orgEmail)->first();
+
+        if ($user) {
+            $user->active = 2;
+            
+            if ($user->save()) {
+                return redirect()->route('home');
+            }
+        }
+    }
+
+    function userforgetPassword(Request $request) {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+        
+        $link = Crypt::encryptString($request->email);
+        $link = url('/userResetForgetPassword/'.$link);
+
+        Mail::to($request->email)->send(new UserForgetPassword($link));
+        return redirect()->route('home');
+    }
+
+    function userResetForgetPassword($email) {
+        $orgEmail = Crypt::decryptString($email);
+        return view('user-set-forget-password',['email' => $orgEmail]);
+    }
+
+    function userSetForgetPassword(Request $request) {
+        $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|confirmed|min:6'
+        ]);
+
+        $user= User::where('email', $request->email)->first();
+        if ($user) {
+            $user->password = Hash::make($request->password);
+            if ($user->save()) {
+                return redirect()->route('loginPage');
+            }
+        }
+        return $request;
+    }
+ 
 }    

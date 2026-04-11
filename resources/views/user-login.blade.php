@@ -18,11 +18,26 @@
     </style>
 </head>
 
-<body>
+<body class="bg-light d-flex flex-column min-vh-100">
 
     @include('components.user_navbar')
 
-    <div class="container d-flex justify-content-center align-items-center" style="height: 90vh;">
+    {{-- Toast Message --}}
+    @if (session('success'))
+        <div class="position-fixed top-0 end-0 p-3" style="z-index: 9999; margin-top: 70px;">
+            <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('success') }}
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                        data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
+    @endif
+
+    <div class="container flex-grow-1 d-flex justify-content-center align-items-center">
 
         <div class="card shadow-lg p-4" style="width: 400px;">
             <h3 class="text-center mb-4">🔐 Login</h3>
@@ -42,8 +57,13 @@
 
                 <button class="btn btn-primary w-100">Login</button>
 
-                <div class="text-center mt-3">
-                    <small>Don't have account?</small><br>
+                <div class="text-center mx-3 mt-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <small>Don't have account?</small>
+                        <a href="{{ route('userforgetPassword') }}" class="small text-decoration-none">
+                            Forgot Password?
+                        </a>
+                    </div>
                     <a href="{{ route('signupPage') }}" class="btn btn-outline-primary btn-sm mt-2">
                         Register
                     </a>
@@ -56,7 +76,15 @@
     @include('components.user_footer')
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
-
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let toastEl = document.getElementById('successToast');
+            if (toastEl) {
+                let toast = new bootstrap.Toast(toastEl);
+                toast.show();
+            }
+        });
+    </script>
 </body>
 
 </html>

@@ -17,6 +17,7 @@
         <div class="navbar-nav gap-1">
             <a class="nav-link active fw-semibold" aria-current="page" href="/">Home</a>
             <a class="nav-link fw-semibold" href="">Cateqories</a>
+            <a class="nav-link fw-semibold" href="{{ route('userDetails') }}">Attempts Quiz</a>
             <a class="nav-link fw-semibold" href="">Blog</a>
             @if (session('user'))
                 <a class="nav-link fw-semibold" href="{{ route('userLogout') }}">Logout</a>

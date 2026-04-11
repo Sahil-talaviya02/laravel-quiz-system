@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Search</title>
+    <title>Home Page</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
@@ -13,6 +13,20 @@
 <body class="bg-light d-flex flex-column min-vh-100">
 
     @include('components.user_navbar')
+
+    {{-- ✅ SUCCESS TOAST --}}
+    @if (session('success'))
+        <div class="position-fixed top-0 end-0 p-3" style="z-index:9999; margin-top:70px;">
+            <div id="successToast" class="toast text-bg-success border-0">
+                <div class="d-flex">
+                    <div class="toast-body">
+                        {{ session('success') }}
+                    </div>
+                    <button class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
+    @endif
 
     <main class="flex-grow-1">
 
@@ -85,7 +99,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
     <!-- SEARCH FILTER -->
-    {{-- <script>
+    <script>
         document.getElementById('search').addEventListener('keyup', function() {
             let value = this.value.toLowerCase();
             let items = document.querySelectorAll('.category-item');
@@ -95,7 +109,18 @@
                 item.style.display = text.includes(value) ? '' : 'none';
             });
         });
-    </script> --}}
+
+        {{-- ✅ AUTO SHOW TOAST --}}
+        document.addEventListener("DOMContentLoaded", function() {
+            let toastEl = document.getElementById('successToast');
+            if (toastEl) {
+                let toast = new bootstrap.Toast(toastEl, {
+                    delay: 3000
+                });
+                toast.show();
+            }
+        });
+    </script>
 
 </body>
 

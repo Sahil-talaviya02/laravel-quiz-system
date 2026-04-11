@@ -4,6 +4,8 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
+Route::view('/forgot-password', 'user-forget-password')->name('userforgetPassword');
+
 Route::controller(UserController::class)->group(function () {
 
     Route::get('/', 'welcome')->name('home');
@@ -24,28 +26,43 @@ Route::controller(UserController::class)->group(function () {
 
     Route::get('/logout', 'userLogout')->name('userLogout');
 
-    //mcq pages
-    Route::get('/mcq/{id}/{name}', 'mcq')->name('mcq');
-    Route::post('/submitNext/{id}', 'submitNext')->name('submitNext');
-
-    
     Route::post('/tab-change', 'tabChange')->name('tabChange');
     Route::get('/force-result','forceResult')->name('forceResult');
+    
+    //email verify user
+    Route::get('/verify-user/{email}','verifyUser')->name('verifyUser');
+    //reset password user
+    Route::post('/forgot-password', 'userforgetPassword')->name('userforgetPassword');
+    Route::get('/forget-Reset-pasword/{email}', 'userResetForgetPassword')->name('userResetForgetPassword');
+    Route::post('/user-set-pasword', 'userSetForgetPassword')->name('userSetForgetPassword');
 });
 
+Route::middleware('CheckUserAuth')->group(function() {
+    Route::controller(UserController::class)->group(function () {
+        //mcq pages
+        Route::get('/mcq/{id}/{name}', 'mcq')->name('mcq');
+        Route::post('/submitNext/{id}', 'submitNext')->name('submitNext');
 
+        Route::get('/user-details', 'userDetails')->name('userDetails');
+    });
+});
+
+Route::middleware('CheckAdminAuth')->group(function() {
+    Route::controller(AdminController::class)->group(function () {
+        Route::get('/admin-categories', 'categories')->name('adminCategory');
+        Route::post('/add-categories', 'addCategories')->name('addCategories');
+        Route::get('/admin-categories/delete/{id}', 'deleteCategories')->name('deleteCategory');
+        Route::get('/add-quiz', 'addQuiz')->name('addQuiz');
+        Route::post('/add-mcq', 'addMcqs')->name('addMcq');
+        Route::get('/show-quiz/{id}/{quizName}', 'showQuiz')->name('showQuiz');
+        Route::get('/quiz-list/{id}/{category}', 'quizList')->name('quizList');
+        Route::get('/admin-logout', 'logout')->name('adminLogout');
+    });
+});
 
 Route::view('/admin-login','admin-login')->name('adminLogin');
 
 Route::controller(AdminController::class)->group(function () {
     Route::post('/admin-login', 'login')->name('adminLogin');
     Route::get('/dashboard', 'dashboard')->name('dashboard');
-    Route::get('/admin-categories', 'categories')->name('adminCategory');
-    Route::get('/admin-logout', 'logout')->name('adminLogout');
-    Route::post('/add-categories', 'addCategories')->name('addCategories');
-    Route::get('/admin-categories/delete/{id}', 'deleteCategories')->name('deleteCategory');
-    Route::get('/add-quiz', 'addQuiz')->name('addQuiz');
-    Route::post('/add-mcq', 'addMcqs')->name('addMcq');
-    Route::get('/show-quiz/{id}/{quizName}', 'showQuiz')->name('showQuiz');
-    Route::get('/quiz-list/{id}/{category}', 'quizList')->name('quizList');
 });
